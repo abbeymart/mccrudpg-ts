@@ -123,5 +123,3 @@ function newDeleteRecord(params: CrudParamsType, options: CrudOptionsType = {}) 
 }
 
 export { DeleteRecord, newDeleteRecord };
-
-
