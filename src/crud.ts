@@ -2,7 +2,7 @@
  * @Author: abbeymart | Abi Akindele | @Created: 2021-04-18
  * @Company: Copyright 2021 Abi Akindele  | mConnect.biz
  * @License: All Rights Reserved | LICENSE.md
- * @Description: mcaccess: crud base class/methods
+ * @Description: mccrudpg: crud base class/methods
  */
 
 import { AuditLog, newAuditLog } from "@mconnect/mcauditlog";

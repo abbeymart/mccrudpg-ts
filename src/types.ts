@@ -2,7 +2,7 @@
  * @Author: abbeymart | Abi Akindele | @Created: 2021-04-18
  * @Company: Copyright 2021 Abi Akindele  | mConnect.biz
  * @License: All Rights Reserved | LICENSE.md
- * @Description: mc-central-ts: bookmark socket.io
+ * @Description: mccrudpg: types
  */
 
 import { Sequelize } from "sequelize";

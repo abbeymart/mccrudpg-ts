@@ -2,12 +2,12 @@
  * @Author: abbeymart | Abi Akindele | @Created: 2021-04-16
  * @Company: Copyright 2020 Abi Akindele  | mConnect.biz
  * @License: All Rights Reserved | LICENSE.md
- * @Description: mcaccess: getRecord(s)
+ * @Description: mccrudpg: getRecord(s)
  */
-import { Crud, CrudOptionsType, CrudParamsType } from "../crud";
-import { validateUserInfo } from "../../models";
-import { getParamsMessage, } from "@mconnect/mcutils";
-import { isEmptyObject, MessageObject } from "@mconnect/mcmail";
+
+import {Crud} from "./crud";
+import { CrudOptionsType, CrudParamsType, MessageObject, } from "./types";
+import { getParamsMessage, isEmptyObject, } from "./helper";
 import { getResMessage } from "@mconnect/mcresponse";
 import { getHashCache, CacheResponseType, setHashCache } from "@mconnect/mccache";
 import { Op } from "sequelize";
@@ -31,12 +31,6 @@ class GetRecord extends Crud {
         if (validAuditDb.code !== "success") {
             return validAuditDb;
         }
-        // validate request params
-        const validate = validateUserInfo(this.userInfo);
-        if (!validate.ok) {
-            return getParamsMessage(validate.errors as MessageObject);
-        }
-
         // set maximum limit and default values per query
         if (this.limit < 1) {
             this.limit = 1;
