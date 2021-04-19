@@ -8,7 +8,7 @@
 import {Crud} from "./crud";
 import { CrudOptionsType, CrudParamsType, MessageObject, } from "./types";
 import { getParamsMessage, isEmptyObject, } from "./helper";
-import { getResMessage } from "@mconnect/mcresponse";
+import { getResMessage, ResponseMessage } from "@mconnect/mcresponse";
 import { getHashCache, CacheResponseType, setHashCache } from "@mconnect/mccache";
 import { Op } from "sequelize";
 
@@ -17,7 +17,7 @@ class GetRecord extends Crud {
         super(params, options);
     }
 
-    async getRecord() {
+    async getRecord(): Promise<ResponseMessage> {
         // validate models
         const validDb = await this.validateCrudDb()
         if (validDb.code !== "success") {
@@ -69,7 +69,7 @@ class GetRecord extends Crud {
             this.queryParams = otherParams;
         }
 
-        // Get the item(s) by docId(s), queryParams or all items
+        // Get the item(s) by recordIds, queryParams or all items
         let result = [];
         if (this.recordIds && this.recordIds.length > 0) {
             try {

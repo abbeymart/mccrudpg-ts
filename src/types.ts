@@ -192,6 +192,12 @@ export interface CrudOptionsType {
     msgFrom?: string;
 }
 
+export interface ActionParamTaskType {
+    createRecords: Array<ActionParamsType>;
+    updateRecords: Array<ActionParamsType>;
+    recordIds: Array<string>;
+}
+
 export interface EmailUserNameType {
     email: string;
     username: string;
