@@ -7,6 +7,7 @@
 
 export * from "./types";
 export * from "./helper";
+export * from "./crud";
 export * from "./getRecord";
 export * from "./deleteRecord";
 export * from "./saveRecord";
