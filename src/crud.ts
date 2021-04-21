@@ -21,7 +21,7 @@ export class Crud {
     protected auditModel: any;
     protected userModel: any;
     protected profileModel: any;
-    protected accessModel: any;
+    protected sessionModel: any;
     protected verifyModel: any;
     protected roleModel: any;
     protected serviceModel: any;
@@ -74,7 +74,7 @@ export class Crud {
         this.crudModel = params?.crudModel ? params.crudModel : null;
         this.crudTable = params?.crudTable ? params.crudTable : "";
         this.auditModel = params?.auditModel ? params.auditModel : null;
-        this.accessModel = params?.accessModel ? params.accessModel : null;
+        this.sessionModel = params?.sessionModel ? params.sessionModel : null;
         this.userModel = params?.userModel ? params.userModel : null;
         this.profileModel = params?.profileModel ? params.profileModel : null;
         this.verifyModel = params?.verifyModel ? params.verifyModel : null;
@@ -155,9 +155,9 @@ export class Crud {
 
     validateAccessDb() {
         // Check/validate the model/db
-        if (!this.accessModel) {
+        if (!this.sessionModel) {
             return getResMessage("validateError", {
-                message: "accessModel is required",
+                message: "sessionModel is required",
             });
         } else {
             return getResMessage("success", {
@@ -361,7 +361,7 @@ export class Crud {
             }
             // perform crud-operation
             // get the accessKey information for the user
-            const accessRes = await this.accessModel.findOne({
+            const accessRes = await this.sessionModel.findOne({
                 where: {
                     userId   : userInfo.userId,
                     token    : userInfo.token,
@@ -629,7 +629,7 @@ export class Crud {
                 return validAccessDb;
             }
             // check loginName, userId and token validity... from accessKeys collection
-            const validToken = await this.accessModel.findOne({
+            const validToken = await this.sessionModel.findOne({
                 where: {
                     id       : this.userInfo.userId,
                     loginName: this.userInfo.loginName,

@@ -161,7 +161,7 @@ export interface CrudParamsType {
     projectParams?: ProjectParamsType;
     sortParams?: SortParamsType;
     token?: string;
-    accessModel?: any;
+    sessionModel?: any;
     auditModel?: any;
     serviceModel?: any;
     userModel?: any;
