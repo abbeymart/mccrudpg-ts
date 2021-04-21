@@ -156,7 +156,7 @@ export class Crud {
         }
     }
 
-    validateAccessDb() {
+    validateSessionDb() {
         // Check/validate the model/db
         if (!this.sessionModel) {
             return getResMessage("validateError", {
@@ -354,7 +354,7 @@ export class Crud {
             if (validUserDb.code !== "success") {
                 return validUserDb;
             }
-            const validAccessDb = await this.validateAccessDb();
+            const validAccessDb = await this.validateSessionDb();
             if (validAccessDb.code !== "success") {
                 return validAccessDb;
             }
@@ -627,7 +627,7 @@ export class Crud {
             if (validDb.code !== "success") {
                 return validDb;
             }
-            const validAccessDb = await this.validateAccessDb()
+            const validAccessDb = await this.validateSessionDb()
             if (validAccessDb.code !== "success") {
                 return validAccessDb;
             }

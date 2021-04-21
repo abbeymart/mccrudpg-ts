@@ -5,14 +5,14 @@
  * @Description: mcaccess: deleteRecord(s)
  */
 
-import { Crud } from "./crud";
+import { Crud, } from "./crud";
 import { CrudOptionsType, CrudParamsType, MessageObject, } from "./types";
 import { getParamsMessage, isEmptyObject, } from "./helper";
-import { getResMessage, ResponseMessage } from "@mconnect/mcresponse";
-import { getHashCache, CacheResponseType, setHashCache, deleteHashCache } from "@mconnect/mccache";
-import Transaction, { Op, Sequelize } from "sequelize";
-import { validateDeleteParams } from "../../mc-crud-mg/src/ValidateCrudParam";
-import { CrudTaskType } from "../../mc-crud-mg/src";
+import { getResMessage, ResponseMessage, } from "@mconnect/mcresponse";
+import { getHashCache, CacheResponseType, setHashCache, deleteHashCache, } from "@mconnect/mccache";
+import { Op, Sequelize, Transaction, } from "sequelize";
+import { validateDeleteParams, } from "../../mc-crud-mg/src/ValidateCrudParam";
+import { CrudTaskType, } from "../../mc-crud-mg/src";
 
 const sequelize = require("sequelize");
 
@@ -29,9 +29,9 @@ class DeleteRecord extends Crud {
         if (validDb.code !== "success") {
             return validDb;
         }
-        const validAccessDb = await this.validateAccessDb()
-        if (validAccessDb.code !== "success") {
-            return validAccessDb;
+        const validateSessionDb = await this.validateSessionDb()
+        if (validateSessionDb.code !== "success") {
+            return validateSessionDb;
         }
         const validAuditDb = await this.validateAuditDb()
         if (validAuditDb.code !== "success") {
@@ -49,7 +49,7 @@ class DeleteRecord extends Crud {
         let result;
         if (this.recordIds && this.recordIds.length > 0) {
             try {
-                result = await sequelize.transaction(async (t: Transaction.Sequelize) => {
+                result = await sequelize.transaction(async (t: Transaction) => {
                     const removeRec = await this.crudModel.destroy({
                         where: {
                             id: {[Op.in]: this.recordIds},

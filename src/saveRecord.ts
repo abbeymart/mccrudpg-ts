@@ -5,12 +5,12 @@
  * @Description: mcaccess: saveRecord(s) - create/update
  */
 
-import { Crud } from "./crud";
+import { Crud, } from "./crud";
 import { CrudOptionsType, CrudParamsType, MessageObject, ActionParamsType, ActionParamTaskType, } from "./types";
 import { getParamsMessage, isEmptyObject, } from "./helper";
-import { getResMessage, ResponseMessage } from "@mconnect/mcresponse";
-import { getHashCache, CacheResponseType, setHashCache, deleteHashCache } from "@mconnect/mccache";
-import { Op } from "sequelize";
+import { getResMessage, ResponseMessage, } from "@mconnect/mcresponse";
+import { getHashCache, CacheResponseType, setHashCache, deleteHashCache, } from "@mconnect/mccache";
+import { Op, Sequelize, Transaction, } from "sequelize";
 
 const sequelize = require("sequelize");
 
@@ -25,9 +25,9 @@ class SaveRecord extends Crud {
         if (validDb.code !== "success") {
             return validDb;
         }
-        const validAccessDb = await this.validateAccessDb()
-        if (validAccessDb.code !== "success") {
-            return validAccessDb;
+        const validateSessionDb = await this.validateSessionDb()
+        if (validateSessionDb.code !== "success") {
+            return validateSessionDb;
         }
         const validAuditDb = await this.validateAuditDb()
         if (validAuditDb.code !== "success") {
