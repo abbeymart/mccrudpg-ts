@@ -12,6 +12,8 @@ import { getResMessage, ResponseMessage } from "@mconnect/mcresponse";
 import { getHashCache, CacheResponseType, setHashCache, deleteHashCache } from "@mconnect/mccache";
 import { Op } from "sequelize";
 
+const sequelize = require("sequelize");
+
 class SaveRecord extends Crud {
     constructor(params: CrudParamsType, options?: CrudOptionsType) {
         super(params, options);

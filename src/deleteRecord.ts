@@ -10,9 +10,11 @@ import { CrudOptionsType, CrudParamsType, MessageObject, } from "./types";
 import { getParamsMessage, isEmptyObject, } from "./helper";
 import { getResMessage, ResponseMessage } from "@mconnect/mcresponse";
 import { getHashCache, CacheResponseType, setHashCache, deleteHashCache } from "@mconnect/mccache";
-import { Op } from "sequelize";
+import Transaction, { Op, Sequelize } from "sequelize";
 import { validateDeleteParams } from "../../mc-crud-mg/src/ValidateCrudParam";
 import { CrudTaskType } from "../../mc-crud-mg/src";
+
+const sequelize = require("sequelize");
 
 class DeleteRecord extends Crud {
     constructor(params: CrudParamsType, options?: CrudOptionsType) {
@@ -44,32 +46,35 @@ class DeleteRecord extends Crud {
         }
 
         // delete the record(s) by recordIds(s) or queryParams
-        let result = [];
+        let result;
         if (this.recordIds && this.recordIds.length > 0) {
             try {
-                result = await this.crudModel.destroy({
-                    where: {
-                        id: {[Op.in]: this.recordIds},
-                    },
-                });
-                if (result.length) {
-                    // delete cache
-                    await deleteHashCache(this.crudTable, this.hashKey);
-                    // check the audit-log settings - to perform audit-log
-                    if (this.logDelete) {
-                        await this.transLog.deleteLog(this.crudTable, this.currentRecords, this.userId);
-                    }
-                    return getResMessage("success", {
-                        message: "Item/record(s) deleted successfully",
-                        value  : {
-                            recordIds: Number(result.length),
+                result = await sequelize.transaction(async (t: Transaction.Sequelize) => {
+                    const removeRec = await this.crudModel.destroy({
+                        where: {
+                            id: {[Op.in]: this.recordIds},
+                        },
+                    }, {transaction: t});
+                    if (removeRec.length) {
+                        // delete cache
+                        await deleteHashCache(this.crudTable, this.hashKey);
+                        // check the audit-log settings - to perform audit-log
+                        if (this.logDelete) {
+                            await this.transLog.deleteLog(this.crudTable, this.currentRecords, this.userId);
                         }
-                    });
-                } else {
-                    return getResMessage("removeError", {
-                        message: "Error removing/deleting record(s): ",
-                    });
-                }
+                        return getResMessage("success", {
+                            message: "Item/record(s) deleted successfully",
+                            value  : {
+                                recordIds: Number(result.length),
+                            }
+                        });
+                    } else {
+                        throw new Error("Delete transaction error");
+                        // return getResMessage("removeError", {
+                        //     message: "Error removing/deleting record(s): ",
+                        // });
+                    }
+                });
             } catch (e) {
                 return getResMessage("removeError", {
                     message: `Error removing/deleting record(s): ${e.message ? e.message : ""}`,

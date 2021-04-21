@@ -5,12 +5,14 @@
  * @Description: mccrudpg: getRecord(s)
  */
 
-import {Crud} from "./crud";
+import { Crud } from "./crud";
 import { CrudOptionsType, CrudParamsType, MessageObject, } from "./types";
 import { getParamsMessage, isEmptyObject, } from "./helper";
 import { getResMessage, ResponseMessage } from "@mconnect/mcresponse";
 import { getHashCache, CacheResponseType, setHashCache } from "@mconnect/mccache";
 import { Op } from "sequelize";
+
+const sequelize = require("sequelize");
 
 class GetRecord extends Crud {
     constructor(params: CrudParamsType, options?: CrudOptionsType) {

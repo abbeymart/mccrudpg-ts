@@ -9,11 +9,14 @@ import { AuditLog, newAuditLog } from "@mconnect/mcauditlog";
 import { getResMessage, ResponseMessage } from "@mconnect/mcresponse";
 import { DbConnect, DbConnectType, newDbMongo, } from "@mconnect/mcdb";
 import {
-    RoleServiceType, CheckAccessType, UserInfoType, TaskTypes,
-    RoleFuncType, OkResponse, MessageObject, ActionParamsType, QueryParamsType, ProjectParamsType, SortParamsType, CrudParamsType, CrudOptionsType, EmailUserNameType,
+    RoleServiceType, CheckAccessType, UserInfoType, TaskTypes, RoleFuncType,
+    OkResponse, MessageObject, ActionParamsType, QueryParamsType, ProjectParamsType,
+    SortParamsType, CrudParamsType, CrudOptionsType, EmailUserNameType,
 } from "./types";
 import { getParamsMessage, isEmptyObject, isEmail } from "./helper";
 import { Model, Op } from "sequelize";
+
+const sequelize = require("sequelize");
 
 export class Crud {
     protected crudModel: any;
