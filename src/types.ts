@@ -148,7 +148,7 @@ export interface ProjectParamsType {
 }
 
 export interface SortParamsType {
-    [key: string]: number;          // 1 for "asc", -1 for "desc"
+    [key: string]: "ASC" | "DESC";
 }
 
 export interface CrudParamsType {

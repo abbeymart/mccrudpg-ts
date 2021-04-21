@@ -16,7 +16,7 @@ import {
 import { getParamsMessage, isEmptyObject, isEmail } from "./helper";
 import { Model, Op } from "sequelize";
 
-const sequelize = require("sequelize");
+// const sequelize = require("sequelize");
 
 export class Crud {
     protected crudModel: any;
@@ -105,9 +105,9 @@ export class Crud {
         this.logLogout = options?.logLogout ? options.logLogout : false;
         this.usernameExistsMessage = options?.usernameExistsMessage ? options.usernameExistsMessage : "username already exists";
         this.emailExistsMessage = options?.emailExistsMessage ? options.emailExistsMessage : "email already exists";
-        this.cacheExpire = options && options.cacheExpire ? options.cacheExpire : 300;
+        this.cacheExpire = options?.cacheExpire ? options.cacheExpire : 300;
         this.hashKey = JSON.stringify({
-            table        : this.crudModel.tableName || this.userModel.tableName,
+            table        : this.crudModel.tableName,
             queryParams  : this.queryParams,
             projectParams: this.projectParams,
             sortParams   : this.sortParams,
@@ -236,7 +236,39 @@ export class Crud {
     }
 
     // crud instance-methods
+
+    // getCurrentRecords fetch all records, limited by this.limit, and this.skip, if applicable
     async getCurrentRecords(): Promise<ResponseMessage> {
+        try {
+            // validate models
+            const validDb = await this.validateCrudDb();
+            if (validDb.code !== "success") {
+                return validDb;
+            }
+            const currentRecords = await this.crudModel.findAll({
+                skip : this.skip,
+                limit: this.limit,
+            });
+
+            if (currentRecords.length > 0) {
+                // update crud instance value
+                this.currentRecords = currentRecords;
+                return getResMessage("success", {
+                    message: "Current record(s) exists",
+                });
+            } else {
+                return getResMessage("notFound", {
+                    message: "Current record(s) not found.",
+                });
+            }
+        } catch (e) {
+            console.error(e);
+            return getResMessage("notFound", {
+                message: "Error finding current record(s)",
+            });
+        }
+    }    // // getCurrentRecords fetch all records, by recordIds
+    async getCurrentRecordsIds(): Promise<ResponseMessage> {
         try {
             // validate models
             const validDb = await this.validateCrudDb();
@@ -252,8 +284,10 @@ export class Crud {
             if (currentRecords.length > 0 && currentRecords.length === this.recordIds.length) {
                 // update crud instance value
                 this.currentRecords = currentRecords;
+
+
                 return getResMessage("success", {
-                    message: "record exists for update",
+                    message: "Current record(s) exists.",
                 });
             } else if (currentRecords.length < this.recordIds.length) {
                 return getResMessage("notFound", {
@@ -261,13 +295,13 @@ export class Crud {
                 });
             } else {
                 return getResMessage("notFound", {
-                    message: "Record(s) requested for updates, not found.",
+                    message: "Current record(s) not found.",
                 });
             }
         } catch (e) {
             console.error(e);
             return getResMessage("notFound", {
-                message: "Error finding the record(s) requested for updates.",
+                message: "Error finding current record(s)",
             });
         }
     }
@@ -287,7 +321,7 @@ export class Crud {
                 // update crud instance value
                 this.currentRecords = currentRecords;
                 return getResMessage("success", {
-                    message: "record exists for update",
+                    message: "Current record(s) exists.",
                 });
             } else if (currentRecords.length < this.recordIds.length) {
                 return getResMessage("notFound", {
@@ -295,13 +329,13 @@ export class Crud {
                 });
             } else {
                 return getResMessage("notFound", {
-                    message: "Record(s) requested for updates, not found.",
+                    message: "Current record(s) not found.",
                 });
             }
         } catch (e) {
             console.error(e);
             return getResMessage("notFound", {
-                message: "Error finding the record(s) requested for updates.",
+                message: "Error finding current record(s).",
             });
         }
     }
