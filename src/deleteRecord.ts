@@ -11,8 +11,6 @@ import { getParamsMessage, isEmptyObject, } from "./helper";
 import { getResMessage, ResponseMessage, } from "@mconnect/mcresponse";
 import { getHashCache, CacheResponseType, setHashCache, deleteHashCache, } from "@mconnect/mccache";
 import { Op, Sequelize, Transaction, } from "sequelize";
-import { validateDeleteParams, } from "../../mc-crud-mg/src/ValidateCrudParam";
-import { CrudTaskType, } from "../../mc-crud-mg/src";
 
 const sequelize = require("sequelize");
 
