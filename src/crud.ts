@@ -268,7 +268,8 @@ export class Crud {
             });
         }
     }    // // getCurrentRecords fetch all records, by recordIds
-    async getCurrentRecordsIds(): Promise<ResponseMessage> {
+
+    async getCurrentRecordsByIds(): Promise<ResponseMessage> {
         try {
             // validate models
             const validDb = await this.validateCrudDb();
@@ -284,14 +285,12 @@ export class Crud {
             if (currentRecords.length > 0 && currentRecords.length === this.recordIds.length) {
                 // update crud instance value
                 this.currentRecords = currentRecords;
-
-
                 return getResMessage("success", {
                     message: "Current record(s) exists.",
                 });
             } else if (currentRecords.length < this.recordIds.length) {
                 return getResMessage("notFound", {
-                    message: `Only ${currentRecords.length} out of ${this.recordIds.length} update-requested-records were found`,
+                    message: `Only ${currentRecords.length} out of ${this.recordIds.length} record(s) found`,
                 });
             } else {
                 return getResMessage("notFound", {
@@ -317,15 +316,11 @@ export class Crud {
                 where: this.queryParams,
             });
 
-            if (currentRecords.length > 0 && currentRecords.length === this.recordIds.length) {
+            if (currentRecords.length > 0) {
                 // update crud instance value
                 this.currentRecords = currentRecords;
                 return getResMessage("success", {
                     message: "Current record(s) exists.",
-                });
-            } else if (currentRecords.length < this.recordIds.length) {
-                return getResMessage("notFound", {
-                    message: `Only ${currentRecords.length} out of ${this.recordIds.length} update-requested-records were found`,
                 });
             } else {
                 return getResMessage("notFound", {
@@ -354,7 +349,7 @@ export class Crud {
                 where: {
                     groupId  : groupId,
                     serviceId: {[Op.in]: serviceIds},
-                    isActive : true
+                    isActive : true,
                 }
             });
             if (result.length > 0) {
@@ -388,6 +383,10 @@ export class Crud {
             if (validUserDb.code !== "success") {
                 return validUserDb;
             }
+            const validProfileDb = await this.validateProfileDb();
+            if (validProfileDb.code !== "success") {
+                return validProfileDb;
+            }
             const validAccessDb = await this.validateSessionDb();
             if (validAccessDb.code !== "success") {
                 return validAccessDb;
@@ -414,17 +413,23 @@ export class Crud {
             }
 
             // check current current-user status/info
-            let groupId = "";
             const userRes = await this.userModel.findOne({
                 where: {
                     id      : userInfo.userId,
                     isActive: true,
                 }
             });
-            if (!userRes) {
-                return getResMessage("unAuthorized", {message: "Unauthorized: user information not found or inactive"});
-            } else {
-                groupId = userRes.group;
+            if (!userRes || userRes === null) {
+                return getResMessage("unAuthorized", {message: "Unauthorized: user-profile information not found or inactive"});
+            }
+            const profileRes = await this.profileModel.findOne({
+                where: {
+                    userId  : userInfo.userId,
+                    isActive: true,
+                }
+            });
+            if (!profileRes || profileRes === null) {
+                return getResMessage("unAuthorized", {message: "Unauthorized: user-profile information not found or inactive"});
             }
 
             // if all the above checks passed, check for role-services access by taskType
@@ -441,12 +446,12 @@ export class Crud {
 
             let roleServices: Array<RoleServiceType> = [];
             if (serviceIds.length > 0) {
-                roleServices = await this.getRoleServices(groupId, serviceIds)
+                roleServices = await this.getRoleServices(profileRes.groupId, serviceIds)
             }
 
             let permittedRes: CheckAccessType = {
                 userId      : userRes.id,
-                groupId     : userRes.groupId,
+                groupId     : profileRes.groupId,
                 groupIds    : userRes.groupIds,
                 isActive    : userRes.isActive,
                 isAdmin     : userRes.isAdmin || false,
